@@ -16,7 +16,14 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    body
+    {
+      background-image: url('img/pngtree-pure-original-hand-painted-simple-atmosphere-background-material-of-modern-medical-image_929912.jpg');
+    }
+  </style>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  
 	<title>Data Master Pasien</title>
 </head>
 <body>
@@ -31,7 +38,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Tambah Pasien</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -108,8 +115,8 @@
   </div>
 </div>
 <br><br>
-<table class="table"> 
-  <thead class="thead-dark">
+<table class="table table-striped table-dark"> 
+  <thead>
     <tr>
       <th scope="col">No</th>
       <th scope="col">Nomer RM</th>
@@ -126,13 +133,84 @@
     <?php foreach($display_data as $data): ?>
     <tr>
       <th scope="row"><?php echo $no++; ?></th>
-      <td><?php echo $data["nomerrm"]; ?></td>
+      <td id="nomerrmpasien"><?php echo $data["nomerrm"]; ?></td>
       <td><?php echo $data["nama"]; ?></td>
       <td><?php echo $data["alamat"]; ?></td>
       <td><?php echo $data["nik"]; ?></td>
       <td><?php echo $data["bpjs"]; ?></td>
       <td><?php echo $data["nomerhp"]; ?></td>
-      <td><a class="btn btn-warning" href="EditPasien.php?nomerrm=<?php echo $data["nomerrm"]; ?>">Edit</a> | <a href="DeletePasien.php" class="btn btn-danger">Hapus</a> | <a href="RegistrasiRajal.php"class="btn btn-info">Registrasi</a></td>
+      <td> 
+        <a href="DeletePasien.php" class="btn btn-danger" onclick="return confirm('Yakin Akan Menghapus');">Hapus</a> | <a href="RegistrasiRajal.php"class="btn btn-info">Registrasi</a> |
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal<?php echo $data['nomerrm']; ?>">Edit</button>
+        <!-- Modal -->
+      <div class="modal fade" id="editModal<?php echo $data['nomerrm']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Edit Data Pasien</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="MasterPasien.php">
+            <div class="row">
+               <div class="col">
+                  <b><label for="labelnomerrm">Nomer RM</label></b>
+                  <input type="text" class="form-control" placeholder="nomerrm" id="editnomerrm" value="<?php echo $data['nomerrm']; ?>" name="editnomerrm">
+               </div>
+               <div class="col">
+                <b><label for="labelnama">Nama Pasien</label></b>
+                  <input type="text" class="form-control" placeholder="namapasien" value="<?php echo $data['nama']; ?>" name="editnamapasien">
+               </div>
+             </div>
+            <div class="row">
+               <div class="col">
+                  <b><label for="labelnomerrm">Alamat</label></b>
+                  <textarea class="form-control" name="editalamat" rows="3"><?php echo $data["alamat"]; ?></textarea>
+               </div>
+               <div class="col">
+                <b><label for="labelnama">NIK</label></b>
+                  <input type="text" class="form-control" placeholder="First name" value="<?php echo $data['nik']; ?>" name="editnik">
+               </div>
+            </div>
+            <div class="row">
+               <div class="col">
+                  <b><label for="labelnomerrm">Nomer BPJS</label></b>
+                  <textarea class="form-control" name="editbpjs" rows="3"><?php echo $data["bpjs"]; ?></textarea>
+               </div>
+               <div class="col">
+                <b><label for="labelnama">Provinsi</label></b>
+                  <select name="edit_provinsi" class="form-control">
+                    <option value="<?php echo $editpasien['provinsi']; ?>"><?php echo $data['provinsi']; ?></option>
+                  </select>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col">
+                  <b><label for="labelnomerrm">Kabupaten</label></b>
+                  <textarea class="form-control" name="editkabupaten" rows="3"><?php echo $data["kabupaten"]; ?></textarea>
+               </div>
+               <div class="col">
+                <b><label for="labelnama">Kecamatan</label></b>
+                  <textarea class="form-control" name="editkecamatan" rows="3"><?php echo $data['kecamatan']; ?></textarea>
+               </div>
+               <div class="col">
+                  <b><label for="labelnomerrm">Kelurahan</label></b>
+                  <textarea class="form-control" name="editkelurahan" rows="3"><?php echo $data["kelurahan"]; ?></textarea>
+               </div>
+            </div>
+            <br>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+            </div>           
+          </div>
+        </div>
+      </div>
+      </td>
     </tr>
     <?php endforeach; ?>
   </tbody>  
