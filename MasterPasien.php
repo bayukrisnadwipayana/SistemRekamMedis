@@ -1,7 +1,5 @@
 <?php
   require_once("Function.php");
-  $array_provinsi=AksesAPIPublikWilayahIndonesia("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json");
-  $array_kabupaten=AksesAPIPublikWilayahIndonesia("https://www.emsifa.com/api-wilayah-indonesia/api/regencies/51.json");
   $display_data=DisplayDataPasien("SELECT * FROM pasien");
   if(isset($_POST["submit"]))
     {
@@ -10,6 +8,14 @@
         header("location: http://localhost:8080/rekammedis/MasterPasien.php");
       }
     }
+
+  if(isset($_POST['update']))
+  {
+    if(UpdateDataPasien($_POST)>0)
+    {
+      header("Location: http://localhost:8080/rekammedis/MasterPasien.php");
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -58,42 +64,6 @@
           <textarea class="form-control" name="alamat" rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label for="exampleFormControlSelect1">Provinsi</label>          
-          <select class="form-control" name="provinsi">
-            <?php foreach ($array_provinsi as $provinsi):?>
-              <option value="<?php echo $provinsi->name?>"><?php echo $provinsi->name; ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleFormControlSelect1">Kabupaten</label>
-          <select class="form-control" name="kabupaten">
-            <?php foreach($array_kabupaten as $kabupaten): ?>
-              <option><?php echo $kabupaten->name; ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleFormControlSelect1">Kecamatan</label>
-          <select class="form-control" name="kecamatan">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleFormControlSelect1">Kelurahan</label>
-          <select class="form-control" name="kelurahan">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label for="exampleFormControlInput1">NIK</label>
           <input type="text" class="form-control" name="nik" placeholder="NIK">
         </div>
@@ -140,77 +110,58 @@
       <td><?php echo $data["bpjs"]; ?></td>
       <td><?php echo $data["nomerhp"]; ?></td>
       <td> 
-        <a href="DeletePasien.php" class="btn btn-danger" onclick="return confirm('Yakin Akan Menghapus');">Hapus</a> | <a href="RegistrasiRajal.php"class="btn btn-info">Registrasi</a> |
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal<?php echo $data['nomerrm']; ?>">Edit</button>
+        <a href="DeletePasien.php?nomer=<?php echo $data['nomerrm']; ?>" name="hapus" class="btn btn-danger" onclick="return confirm('Yakin Akan Menghapus');">Hapus</a> | <a href="RegistrasiRajal.php"class="btn btn-info">Registrasi</a> |
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal<?php echo $data['nomerrm']; ?>">
+          Edit
+        </button>
+      </td>
+      <!-- Button trigger modal -->
         <!-- Modal -->
-      <div class="modal fade" id="editModal<?php echo $data['nomerrm']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Edit Data Pasien</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+        <div class="modal fade" id="Modal<?php echo $data['nomerrm']; ?>" tabindex="-1" role="dialog" aria-labelledby="Modal" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Data Pasien</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="" method="post">
+                <div class="form-group">
+                  <label for="editnomer">Nomer RM</label>
+                  <input type="text" class="form-control" name="editnomerrm" placeholder="Nomer RM" value="<?php echo $data['nomerrm']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="editnama">Nama</label>
+                  <input type="text" class="form-control" name="editnama" placeholder="Nomer RM" value="<?php echo $data['nama']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="editalamat">Alamat</label>
+                  <input type="text" class="form-control" name="editalamat" placeholder="Nomer RM" value="<?php echo $data['alamat']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="editnik">NIK</label>
+                  <input type="text" class="form-control" name="editnik" placeholder="Nomer RM" value="<?php echo $data['nik']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="editbpjs">Nomer BPJS</label>
+                  <input type="text" class="form-control" name="editbpjs" placeholder="Nomer RM" value="<?php echo $data['bpjs']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="editnomerhp">Nomer HP</label>
+                  <input type="text" class="form-control" name="editnomerhp" placeholder="Nomer RM" value="<?php echo $data['nomerhp']; ?>">
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" name="update">Save changes</button>
+              </div>
+              </form>
+              </div>
+              
             </div>
-            <div class="modal-body">
-              <form method="post" action="MasterPasien.php">
-            <div class="row">
-               <div class="col">
-                  <b><label for="labelnomerrm">Nomer RM</label></b>
-                  <input type="text" class="form-control" placeholder="nomerrm" id="editnomerrm" value="<?php echo $data['nomerrm']; ?>" name="editnomerrm">
-               </div>
-               <div class="col">
-                <b><label for="labelnama">Nama Pasien</label></b>
-                  <input type="text" class="form-control" placeholder="namapasien" value="<?php echo $data['nama']; ?>" name="editnamapasien">
-               </div>
-             </div>
-            <div class="row">
-               <div class="col">
-                  <b><label for="labelnomerrm">Alamat</label></b>
-                  <textarea class="form-control" name="editalamat" rows="3"><?php echo $data["alamat"]; ?></textarea>
-               </div>
-               <div class="col">
-                <b><label for="labelnama">NIK</label></b>
-                  <input type="text" class="form-control" placeholder="First name" value="<?php echo $data['nik']; ?>" name="editnik">
-               </div>
-            </div>
-            <div class="row">
-               <div class="col">
-                  <b><label for="labelnomerrm">Nomer BPJS</label></b>
-                  <textarea class="form-control" name="editbpjs" rows="3"><?php echo $data["bpjs"]; ?></textarea>
-               </div>
-               <div class="col">
-                <b><label for="labelnama">Provinsi</label></b>
-                  <select name="edit_provinsi" class="form-control">
-                    <option value="<?php echo $editpasien['provinsi']; ?>"><?php echo $data['provinsi']; ?></option>
-                  </select>
-               </div>
-            </div>
-            <div class="row">
-               <div class="col">
-                  <b><label for="labelnomerrm">Kabupaten</label></b>
-                  <textarea class="form-control" name="editkabupaten" rows="3"><?php echo $data["kabupaten"]; ?></textarea>
-               </div>
-               <div class="col">
-                <b><label for="labelnama">Kecamatan</label></b>
-                  <textarea class="form-control" name="editkecamatan" rows="3"><?php echo $data['kecamatan']; ?></textarea>
-               </div>
-               <div class="col">
-                  <b><label for="labelnomerrm">Kelurahan</label></b>
-                  <textarea class="form-control" name="editkelurahan" rows="3"><?php echo $data["kelurahan"]; ?></textarea>
-               </div>
-            </div>
-            <br>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
-            </div>
-          </form>
-            </div>           
           </div>
         </div>
-      </div>
-      </td>
     </tr>
     <?php endforeach; ?>
   </tbody>  
